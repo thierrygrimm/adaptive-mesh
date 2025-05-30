@@ -3,7 +3,7 @@ import config
 import sender
 import receiver
 import mesh
-import rl_policy
+# import rl_policy
 import aggregator
 import parameter_manager
 import utils
@@ -32,14 +32,14 @@ def main():
     sender_mod = sender.PacketGenerator(cfg, serial_interface, log_file)
     receiver_mod = receiver.PacketReceiver(cfg, serial_interface)
     receiver_mod.start_listener()
-    rl_agent = rl_policy.RLAgent(cfg)
+    #rl_agent = rl_policy.RLAgent(cfg)
     aggregator_mod = aggregator.MetricAggregator(cfg)
     param_mgr = parameter_manager.ParameterCoordinator(cfg, mesh_iface)
     # Main experiment loop: send, evaluate, reboot, repeat
     for cycle in range(5):
         print(f"\n=== Experiment Cycle {cycle+1}/5 ===")
         # 1. Send broadcast packets
-        sender.send_broadcast_packets(serial_interface, duration=60, interval=0.1, log_file=log_file, idle_time=10)
+        sender.send_broadcast_packets(serial_interface, duration=60, interval=5, log_file=log_file, idle_time=10)
         # 2. Evaluation period (placeholder)
         print("[EVAL] Evaluation period placeholder...")
         time.sleep(5)  # Placeholder for evaluation logic

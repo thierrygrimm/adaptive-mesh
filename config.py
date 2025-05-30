@@ -1,7 +1,11 @@
 import json
+import os
 from itertools import product
 
 def load_config(path):
+    if not os.path.exists(path):
+        print(f"[WARN] Config file '{path}' not found. Using DEFAULT_CONFIG.")
+        return DEFAULT_CONFIG
     with open(path, 'r') as f:
         return json.load(f)
 

@@ -38,6 +38,7 @@ def send_broadcast_packets(serial_interface, duration=60, interval=0.1, log_file
         utils.log_send({'id': msg_id, 'payload': message, 'timestamp': utils.current_time()}, log_file)
         msg_id += 1
         time.sleep(interval)
+        
     # Idle wait to collect ACKs/messages
     print(f"[SENDER] Idle for {idle_time} seconds to collect incoming messages...")
     time.sleep(idle_time)

@@ -15,6 +15,12 @@ class PacketReceiver:
             if packet:
                 self.handle_packet(packet)
 
+    def start_listener(self):
+        from pubsub import pub
+        def on_receive(packet, interface=None):
+            self.handle_packet(packet)
+        pub.subscribe(on_receive, "meshtastic.receive")
+
     def handle_packet(self, packet):
         ack = parse_ack(packet)
         utils.log_receive(packet, ack)
@@ -28,6 +34,7 @@ class PacketReceiver:
                 else:
                     payload_str = str(payload)
                 if payload_str.startswith('MSG_'):
+                    print(f"[RECEIVED MSG] {payload_str}")
                     # Extract message ID (format: MSG_<id>_<timestamp>)
                     parts = payload_str.split('_')
                     if len(parts) >= 3:
