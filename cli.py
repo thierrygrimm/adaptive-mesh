@@ -82,10 +82,16 @@ def format_packet(packet):
     decoded = packet.get('decoded', {})
     portnum = decoded.get('portnum', 'UNKNOWN')
     ts = datetime.now().strftime('%H:%M:%S')
+    # Extract SNR and RSSI if available
+    snr = packet.get('rxSnr')
+    rssi = packet.get('rxRssi')
+    signal_info = ''
+    if snr is not None or rssi is not None:
+        signal_info = f" [SNR: {snr if snr is not None else '?'} dB, RSSI: {rssi if rssi is not None else '?'} dBm]"
     if portnum == 'TEXT_MESSAGE_APP':
         text = decoded.get('text') or decoded.get('payload', b'').decode(errors='ignore')
         sender = packet.get('fromId', packet.get('from'))
-        return colored(f"[{ts}] <{sender}> {text}", "green")
+        return colored(f"[{ts}] <{sender}> {text}{signal_info}", "green")
     elif portnum == 'TELEMETRY_APP':
         telemetry = decoded.get('telemetry', {})
         metrics = telemetry.get('deviceMetrics', {})
@@ -93,22 +99,22 @@ def format_packet(packet):
         voltage = metrics.get('voltage', '?')
         uptime = metrics.get('uptimeSeconds', '?')
         sender = packet.get('fromId', packet.get('from'))
-        return colored(f"[{ts}] [TELEMETRY] <{sender}> Battery: {battery}%, Voltage: {voltage}V, Uptime: {uptime}s", "cyan")
+        return colored(f"[{ts}] [TELEMETRY] <{sender}> Battery: {battery}%, Voltage: {voltage}V, Uptime: {uptime}s{signal_info}", "cyan")
     elif portnum == 'ALERT_APP':
         alert = decoded.get('payload', b'').decode(errors='ignore')
-        return colored(f"[{ts}] [ALERT] {alert}", "red", attrs=["bold"])
+        return colored(f"[{ts}] [ALERT] {alert}{signal_info}", "red", attrs=["bold"])
     elif portnum == 'PRIVATE_APP':
         data = decoded.get('payload', b'').decode(errors='ignore')
-        return colored(f"[{ts}] [PRIVATE] {data}", "magenta")
+        return colored(f"[{ts}] [PRIVATE] {data}{signal_info}", "magenta")
     elif portnum == 'NODEINFO_APP':
         user = decoded.get('user', {})
         short = user.get('shortName', '?')
         long = user.get('longName', '?')
         hw = user.get('hwModel', '?')
         nodeid = user.get('id', packet.get('fromId', packet.get('from')))
-        return colored(f"[{ts}] [NODEINFO] {short} ({long}) [{hw}] joined the mesh. (id: {nodeid})", "blue", attrs=["bold"])
+        return colored(f"[{ts}] [NODEINFO] {short} ({long}) [{hw}] joined the mesh. (id: {nodeid}){signal_info}", "blue", attrs=["bold"])
     else:
-        return colored(f"[{ts}] [UNKNOWN] {packet}", "yellow")
+        return colored(f"[{ts}] [UNKNOWN] {packet}{signal_info}", "yellow")
 
 def onReceive(packet, interface):
     decoded = packet.get('decoded', {})
