@@ -5,7 +5,7 @@ import copy
 
 def merge_config(base, override):
     """Recursively merge override dict into base dict.
-    """Recursively merge override dict into base dict."""
+    
     Args:
         base: Base configuration dictionary
         override: Override configuration dictionary
