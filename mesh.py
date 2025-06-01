@@ -44,4 +44,40 @@ class MeshInterface:
             node.reboot()
             print("[INFO] Device rebooted. Please restart the script after device reconnects.")
         else:
-            print("[INFO] LoRa parameters are correct. No reboot needed.") 
+            print("[INFO] LoRa parameters are correct. No reboot needed.")
+
+    def ensure_lora_params(self):
+        """
+        Check local LoRa parameters against config, update and reboot if needed.
+        Returns True if reboot was triggered, False otherwise.
+        """
+        node = self.get_local_node()
+        if node is None:
+            print("[ERROR] No local node found for parameter check.")
+            return False
+        changed = False
+        lora = node.localConfig.lora
+        desired = self.config.get('lora_params', {})
+        # Map config keys to device attribute names
+        param_map = {
+            'spreading_factor': 'spread_factor',
+            'bandwidth': 'bandwidth',
+            'coding_rate': 'coding_rate',
+        }
+        for cfg_key, dev_attr in param_map.items():
+            desired_val = desired.get(cfg_key)
+            if desired_val is not None and hasattr(lora, dev_attr):
+                current_val = getattr(lora, dev_attr)
+                print(f"[DEBUG] {dev_attr}: current={current_val}, desired={desired_val}")
+                if current_val != desired_val:
+                    setattr(lora, dev_attr, desired_val)
+                    changed = True
+        if changed:
+            print("[INFO] LoRa parameters changed, writing config and rebooting device...")
+            node.writeConfig("lora")
+            node.reboot()
+            print("[INFO] Device rebooted. Continuing after reboot...")
+            return True
+        else:
+            print("[INFO] LoRa parameters are correct. No reboot needed.")
+            return False 
