@@ -1,22 +1,35 @@
 import json
 import os
 from itertools import product
+import copy
+
+def merge_config(base, override):
+    """Recursively merge override dict into base dict."""
+    for k, v in override.items():
+        if k in base and isinstance(base[k], dict) and isinstance(v, dict):
+            merge_config(base[k], v)
+        else:
+            base[k] = v
+    return base
 
 def load_config(path):
-    if not os.path.exists(path):
+    cfg = copy.deepcopy(DEFAULT_CONFIG)
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            file_cfg = json.load(f)
+            merge_config(cfg, file_cfg)
+    else:
         print(f"[WARN] Config file '{path}' not found. Using DEFAULT_CONFIG.")
-        return DEFAULT_CONFIG
-    with open(path, 'r') as f:
-        return json.load(f)
+    return cfg
 
 # Example default config structure
 DEFAULT_CONFIG = {
     'node_ids': [],
-    'frequency': 915e6,
+    'frequency': 868e6,
     'port_mappings': {},
     'lora_params': {
         'spreading_factor': 7,
-        'bandwidth': 125e3,
+        'bandwidth': 250,
         'coding_rate': 5
     },
     'rl_hyperparameters': {
