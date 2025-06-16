@@ -1,35 +1,58 @@
 import time
 import json
 import glob
+import os
 
 class MetricAggregator:
+    """Aggregates network performance metrics from packet and ACK data."""
+    
     def __init__(self, config):
+        """Initialize the metric aggregator.
+        
+        Args:
+            config: Configuration dictionary
+        """
         self.config = config
         self.data = []
 
     def add(self, packet, ack):
+        """Add packet and ACK data to the aggregator.
+        
+        Args:
+            packet: Dictionary containing packet data
+            ack: Dictionary containing ACK data
+        """
         self.data.append((packet, ack))
 
     def aggregate(self):
+        """Aggregate metrics over the last 60 seconds.
+        
+        Returns:
+            Dictionary containing aggregated performance metrics
+        """
         # Aggregate over last 1 min
         now = time.time()
         window = [d for d in self.data if now - d[0]['timestamp'] < 60]
         # Compute averages and stats
         return self.evaluate_performance(window)
 
-    def aggregate_metrics(self):
+    def aggregate_from_memory(self, sent_packets, ack_metrics):
+        """Aggregate metrics from in-memory sent_packets and ack_metrics dicts.
+        
+        Args:
+            sent_packets: Dictionary mapping msg_id to packet data
+            ack_metrics: Dictionary mapping msg_id to ACK data
+            
+        Returns:
+            Dictionary containing average RTT, RSSI, SNR, delivery rate, etc.
         """
-        Aggregate all sent_packets_*.json files and their ACK metrics.
-        Returns a dict with average RTT, RSSI, SNR, delivery rate, etc.
-        """
-        files = glob.glob('sent_packets_*.json')
         all_packets = []
-        for file in files:
-            try:
-                with open(file, 'r') as f:
-                    all_packets.extend(json.load(f))
-            except Exception as e:
-                print(f"[ERROR] Failed to load {file}: {e}")
+        for msg_id, pkt in sent_packets.items():
+            pkt_copy = pkt.copy()
+            ack = ack_metrics.get(msg_id)
+            if ack:
+                pkt_copy.update(ack)
+            all_packets.append(pkt_copy)
         if not all_packets:
             return {}
         rtts = [pkt['rtt_ms'] for pkt in all_packets if 'rtt_ms' in pkt and pkt['rtt_ms'] is not None]
@@ -49,14 +72,25 @@ class MetricAggregator:
             'total_packets': total,
             'delivered_packets': delivered
         }
+        print(f"[AGGREGATE] In-memory: {delivered}/{total} packets delivered ({metrics['delivery_rate']:.1%})")
         return metrics
 
     def get_policy_input(self):
+        """Return a summary of metrics for RL input.
+        
+        Returns:
+            Dictionary containing aggregated metrics for reinforcement learning
         """
-        Return a summary of metrics for RL input (e.g., as a dict).
-        """
-        return self.aggregate_metrics()
+        return self.aggregate()
 
     def evaluate_performance(self, window):
+        """Compute metrics for RL input.
+        
+        Args:
+            window: List of packet/ACK data tuples
+            
+        Returns:
+            Dictionary containing performance metrics
+        """
         # Compute metrics for RL input
         return {}
