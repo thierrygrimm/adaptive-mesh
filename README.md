@@ -274,6 +274,34 @@ $$p_{a_t} = \theta_a^{\top} x_t + \alpha \sqrt{x_t^{\top} A_a^{-1} x_t}$$
 
 The command line tool displays real-time parameter selection and performance metrics. The contextual bandit algorithm shows parameter configurations, performance scores, and learning progress across multiple nodes.
 
+### Analysis Results
+
+**Feature Analysis:**
+
+The system analyzes multiple contextual features to make intelligent parameter decisions. The feature analysis shows how different network conditions and performance metrics influence the LinUCB algorithm's parameter selection.
+
+<p align="center">
+  <img src="Images/features.png" alt="Feature Analysis" width="600"/>
+  <br/>
+  <em>Figure 4: Feature analysis showing the influence of different contextual variables on parameter selection.</em>
+</p>
+
+**LinUCB Algorithm Performance:**
+
+The LinUCB (Linear Upper Confidence Bound) algorithm demonstrates effective exploration-exploitation balance, showing confidence bounds and prediction accuracy across different parameter combinations.
+
+<p align="center">
+  <img src="Images/linucb.png" alt="LinUCB Algorithm Analysis" width="600"/>
+  <br/>
+  <em>Figure 5: LinUCB algorithm analysis showing prediction confidence bounds and parameter performance across spreading factors and bandwidths.</em>
+</p>
+
+**Key Analysis Insights:**
+- **Confidence Bounds**: LinUCB provides well-calibrated uncertainty estimates for parameter selection
+- **Parameter Sensitivity**: Different spreading factors and bandwidths show varying confidence levels
+- **Exploration Strategy**: The algorithm effectively balances exploration of uncertain parameters with exploitation of known good configurations
+- **Convergence Behavior**: Clear learning progression from high uncertainty to confident parameter selection
+
 ---
 
 ## Issues
