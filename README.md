@@ -308,14 +308,22 @@ The LinUCB (Linear Upper Confidence Bound) algorithm demonstrates effective expl
 
 ### Troubleshooting
 
+**Device Connection & Parameter Management:**
+The application includes robust device connection logic with automatic retry mechanisms and parameter validation:
+
+- **Serial Port Locking**: Automatic retry logic (5 attempts) handles port locking issues during device reboots
+- **Parameter Validation**: System automatically checks and applies LoRa parameters on startup via `ensure_lora_params()`
+- **Device Reboot Handling**: Automatic reconnection after parameter changes with 8-second wait periods
+- **Model Persistence**: RL models are automatically saved before reboots and restored after reconnection
+
 **Common Issues:**
 - **Serial Port Access**: Ensure proper permissions for USB serial devices
   ```bash
   sudo chmod 666 /dev/ttyUSB0  # Linux
   ```
 - **Device Not Found**: Check USB connection and device compatibility
-- **Parameter Update Failures**: Verify LoRa device firmware supports parameter modification
-- **Memory Issues**: Large datasets may require increased system memory
+- **Parameter Update Failures**: System automatically handles parameter mismatches and triggers device reboots
+- **Connection Timeouts**: Built-in retry logic with exponential backoff for serial port access
 
 **Debug Mode:**
 Enable detailed logging by modifying the logging level in `main.py`:
