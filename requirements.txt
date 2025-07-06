@@ -1,0 +1,32 @@
+# Core scientific computing
+numpy>=1.21.0
+
+# Machine learning and data analysis
+scipy>=1.7.0
+
+# Plotting and visualization
+matplotlib>=3.5.0
+
+# Meshtastic communication
+meshtastic>=2.0.0
+
+# Serial communication
+pyserial>=3.5
+
+# Cryptographic libraries
+PyNaCl>=1.4.0
+
+# Protocol buffer support
+protobuf>=3.20.0
+
+# YAML configuration support
+PyYAML>=6.0
+
+# PubSub messaging
+PyPubSub>=4.0.0
+
+# Colored logging (optional)
+colorlog>=6.0.0
+
+# Standard library extensions
+typing-extensions>=4.0.0  
