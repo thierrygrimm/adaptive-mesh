@@ -1,6 +1,6 @@
 <a name="readme-top"></a>
 
-![Mesh Network](images/header.png "Header Image")
+![Mesh Network](Images/header.png "Header Image")
 # Bandit Algorithms for Adaptive Mesh Tuning
 
 <div align='left'>
